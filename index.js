@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const axios = require('axios');
 require('dotenv').config();
+const fakeData = require('./fakeData');
 
 // Init variable
 const app = express();
@@ -98,10 +99,11 @@ app.use('/test-vincent', (req, res) => {
     });
 
 
+// Test on fake data
 
-
-
-})
+app.use('/test', (req, res) => {
+  res.json(fakeData.data);
+});
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(`${__dirname}/client/build/index.html`));
