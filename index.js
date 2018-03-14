@@ -22,7 +22,7 @@ app.use(express.static(path.join(__dirname, 'client/build')));
 // });
 
 
-app.use('/', (req, res) => {
+app.get('/', (req, res) => {
   let urlListMatchTest = 'https://api.dc01.gamelockerapp.com/shards/global/matches?filter[createdAt-start]=2018-03-07T14:25:30Z&page[limit]=5&page[offset]=5&sort=createdAt';
   let player = 'https://api.dc01.gamelockerapp.com/shards/global/players/951488175786881024';
   // let urlRosterTest = 'https://api.dc01.gamelockerapp.com/shards/global/rosters/id=6c60ad2c-392b-41c0-a32a-2686715695d9';
@@ -63,7 +63,7 @@ app.use('/', (req, res) => {
 
 })
 
-app.use('/test-vincent', (req, res) => {
+app.get('/test-vincent', (req, res) => {
   let urlListMatchTest = 'https://api.dc01.gamelockerapp.com/shards/global/matches?filter[createdAt-start]=2018-03-03T14:25:30Z&page[limit]=5&page[offset]=5&sort=createdAt';
   let player = 'https://api.dc01.gamelockerapp.com/shards/global/players/951488175786881024';
   // let urlRosterTest = 'https://api.dc01.gamelockerapp.com/shards/global/rosters/id=6c60ad2c-392b-41c0-a32a-2686715695d9';
@@ -97,12 +97,46 @@ app.use('/test-vincent', (req, res) => {
     .catch((error) => {
       console.log(error.response)
     });
-
+});
 
 // Test on fake data
 
-app.use('/test', (req, res) => {
-  res.json(fakeData.data);
+app.get('/test-fake-data', (req, res) => {
+
+  let toBDD = {
+    type: 'match',
+    id: '5527B5E74841413A849E4C021D015106',
+    createdAt: '2018-03-03T14:25:36Z',
+    duration: 603,
+    mapID: 'FFFFE4774561141D49B46892B5CBACFA',
+    type: 'LEAGUE2V2',
+    rankingType: 'RANKED',
+    serverType: 'QUICK2V2',
+    roster1: 'id',
+    roster2: 'id',
+  };
+
+  console.log(toBDD)
+
+  async function GetAllRankedGames(response){
+  try {
+     const allRankedGames = await
+       fakeData.data.filter(function( obj ) {
+         return obj.attributes.tags.rankingType == 'RANKED';
+       });
+     return allRankedGames;
+   }
+   catch(error) {
+     console.log(error.response)
+   }
+ }
+
+ GetAllRankedGames(fakeData).then( function(result) {
+   res.json(result);
+ });
+
+
+  // res.json(fakeData);
 });
 
 app.get('*', (req, res) => {
