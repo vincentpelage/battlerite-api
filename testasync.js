@@ -37,7 +37,7 @@ app.use(express.static(path.join(__dirname, 'client/build')));
 
 app.get('/', (req, res) => {
   let urlListMatchTest = 'https://api.dc01.gamelockerapp.com/shards/global/matches?filter[createdAt-start]=2018-03-07T14:25:30Z&page[limit]=5&page[offset]=5&sort=createdAt';
-  let singleMatch = 'https://api.dc01.gamelockerapp.com/shards/global/matches/FEF36D129DDA4B738B6C50C253279A19';
+  let player = 'https://api.dc01.gamelockerapp.com/shards/global/players/951488175786881024';
   // let urlRosterTest = 'https://api.dc01.gamelockerapp.com/shards/global/rosters/id=6c60ad2c-392b-41c0-a32a-2686715695d9';
   let config = {};
   config.headers = {
@@ -47,7 +47,7 @@ app.get('/', (req, res) => {
   }
 
   axios
-    .get(singleMatch, config)
+    .get(urlListMatchTest, config)
     .then((response) => {
 
       async function GetAllMatches(response){
@@ -115,119 +115,60 @@ app.get('/test-vincent', (req, res) => {
 // Test on fake data
 
 app.get('/test-fake-data', (req, res) => {
-
+//https://stackoverflow.com/questions/45395805/using-await-in-promise-chain
   fakeData.data.map(match => {
 
-    async function GetAllParticipantsRoster1(fakeData){
-      try {
-        const allParticipants = await
-          fakeData.included.filter(function( obj ) {
-              return obj.type == 'roster' && obj.id == roster1;
-            });
-        return allParticipants[0].relationships.participants.data;
-      }
-      catch(error) {
-        console.log(error.response)
-      }
+    async function getJSONAsync(){
+        let json = await dataToObj(match, fakeData);
+        console.log(json)
+        return json;
     }
 
-    const { type, id } = match;
-    const { createdAt, duration } = match.attributes;
-    const { mapID } = match.attributes.stats;
-    const gameType = match.attributes.stats.type;
-    const { rankingType, serverType } = match.attributes.tags;
-    const roster1 = match.relationships.rosters.data[0].id;
-    const roster2 = match.relationships.rosters.data[1].id;
-    const idPlayer = fakeData.included[0].id;
-    const participantsRoster1 =
-      GetAllParticipantsRoster1(fakeData).then( function(participants) {
-        // console.log(participants);
-        return participants;
-      });
-    // console.log(participantsRoster1);
-
-    const newMatch = new Match({
-      type,
-      id,
-      createdAt,
-      duration,
-      mapID,
-      gameType,
-      rankingType,
-      serverType,
-      roster1,
-      roster2,
-      participantsRoster1
-    });
-    newMatch.save((err, savedMatch) => {
-      if (err) {
-        console.error(err);
-        return err;
+    function dataToObj(match, fakeData) {
+      async function GetAllParticipantsRoster1(fakeData){
+        try {
+          const allParticipants = await
+            fakeData.included.filter(function( obj ) {
+              const roster1 = match.relationships.rosters.data[0].id;
+                return obj.type == 'roster' && obj.id == roster1;
+              });
+          return allParticipants[0].relationships.participants.data;
+        }
+        catch(error) {
+          console.log(error.response)
+        }
       }
-      console.log(savedMatch);
+      const participantsRoster1 =
+        GetAllParticipantsRoster1(fakeData).then( function(participants) {
+          // console.log(participants);
+          return participants;
+        });
+      return ({
+        type: match.type,
+        id: match.id,
+        createdAt: match.attributes.createdAt,
+        duration: match.attributes.duration,
+        mapID: match.attributes.stats.mapID,
+        roster1: match.relationships.rosters.data[0].id,
+        participantsRoster1: participantsRoster1,
+      })
+    }
+
+    getJSONAsync().then( function(result) {
+      const newMatch = new Match(result);
+      newMatch.save((err, savedMatch) => {
+        if (err) {
+          console.error(err);
+          return err;
+        }
+        console.log(savedMatch);
+      });
     });
+
+
   })
 
-  // let toSave = {};
-  //
-  // Object.keys(fakeData).map(property => {
-  //   if (property === 'data') {
-  //     toSave.type = fakeData[property][0].type;
-  //   } else if (property === 'included') {
-  //     console.log(toSave.type);
-  //   }
-  // })
 
-
-
-  // const { type } = fakeData.data[0];
-  // const { id } = fakeData.data[0];
-  // const { createdAt } = fakeData.data[0].attributes;
-  // const { duration } = fakeData.data[0].attributes;
-  // const { mapID } = fakeData.data[0].attributes.stats;
-  // const gameType = fakeData.data[0].attributes.stats.type;
-  // const { rankingType } = fakeData.data[0].attributes.tags;
-  // const { serverType } = fakeData.data[0].attributes.tags;
-  // const { roster1 } = fakeData.data[0].relationships.rosters.data[0];
-  // const { roster2 } = fakeData.data[0].relationships.rosters.data[1];
-
-
-  // const newMatch = new Match({
-  //   type,
-  //   id,
-  //   createdAt,
-  //   duration,
-  //   mapID,
-  //   gameType,
-  //   rankingType,
-  //   serverType,
-  //   roster1,
-  //   roster2,
-  // });
-  // newMatch.save((err, savedMatch) => {
-  //   if (err) {
-  //     console.error(err);
-  //     return err;
-  //   }
-  //   console.log(savedMatch);
-  // });
-
- //  async function GetAllRankedGames(response){
- //  try {
- //     const allRankedGames = await
- //       fakeData.data.filter(function( obj ) {
- //         return obj.attributes.tags.rankingType == 'RANKED';
- //       });
- //     return allRankedGames;
- //   }
- //   catch(error) {
- //     console.log(error.response)
- //   }
- // }
- //
- // GetAllRankedGames(fakeData).then( function(result) {
- //   res.json(result);
- // });
 
 
   res.json(fakeData);
