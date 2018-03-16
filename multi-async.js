@@ -34,7 +34,7 @@ app.use(express.static(path.join(__dirname, 'client/build')));
 //   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, X-Title-Id, Authorization');
 //   next();
 // });
-
+//
 
 async function getMatchType(match){
   try {
@@ -320,7 +320,7 @@ app.get('/test-fake-data', (req, res) => {
   })
 
   res.json(fakeData);
-  
+
 });
 
 app.get('*', (req, res) => {
