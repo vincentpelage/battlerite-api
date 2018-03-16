@@ -150,6 +150,96 @@ async function getParticipantsRoster2Ids(roster2, fakeData){
   }
 }
 
+async function getParticipant1Roster1Champion(roster1, participantsRoster1){
+  try {
+    const getParticipant1Roster1Champion = fakeData.included.filter(function( obj ) {
+        return obj.type == 'participant' && obj.id == participantsRoster1[0].id;
+    });
+    const champion = {};
+    champion.championId = getParticipant1Roster1Champion[0].attributes.actor;
+    champion.stats = getParticipant1Roster1Champion[0].attributes.stats;
+    return champion;
+  }
+  catch(error) {
+    console.log(error.response)
+  }
+}
+
+async function getParticipant2Roster1Champion(roster1, participantsRoster1){
+  try {
+    const getParticipant2Roster1Champion = fakeData.included.filter(function( obj ) {
+        return obj.type == 'participant' && obj.id == participantsRoster1[1].id;
+    });
+    const champion = {};
+    champion.championId = getParticipant2Roster1Champion[0].attributes.actor;
+    champion.stats = getParticipant2Roster1Champion[0].attributes.stats;
+    return champion;
+  }
+  catch(error) {
+    console.log(error.response)
+  }
+}
+
+async function getParticipant3Roster1Champion(roster1, participantsRoster1){
+  try {
+    const getParticipant3Roster1Champion = fakeData.included.filter(function( obj ) {
+        return obj.type == 'participant' && obj.id == participantsRoster1[2].id;
+    });
+    const champion = {};
+    champion.championId = getParticipant3Roster1Champion[0].attributes.actor;
+    champion.stats = getParticipant3Roster1Champion[0].attributes.stats;
+    return champion;
+  }
+  catch(error) {
+    console.log(error.response)
+  }
+}
+
+async function getParticipant1Roster2Champion(roster2, participantsRoster2){
+  try {
+    const getParticipant1Roster2Champion = fakeData.included.filter(function( obj ) {
+        return obj.type == 'participant' && obj.id == participantsRoster2[0].id;
+    });
+    const champion = {};
+    champion.championId = getParticipant1Roster2Champion[0].attributes.actor;
+    champion.stats = getParticipant1Roster2Champion[0].attributes.stats;
+    return champion;
+  }
+  catch(error) {
+    console.log(error.response)
+  }
+}
+
+async function getParticipant2Roster2Champion(roster2, participantsRoster2){
+  try {
+    const getParticipant2Roster2Champion = fakeData.included.filter(function( obj ) {
+        return obj.type == 'participant' && obj.id == participantsRoster2[1].id;
+    });
+    const champion = {};
+    champion.championId = getParticipant2Roster2Champion[0].attributes.actor;
+    champion.stats = getParticipant2Roster2Champion[0].attributes.stats;
+    return champion;
+  }
+  catch(error) {
+    console.log(error.response)
+  }
+}
+
+async function getParticipant3Roster2Champion(roster2, participantsRoster2){
+  try {
+    const getParticipant3Roster2Champion = fakeData.included.filter(function( obj ) {
+        return obj.type == 'participant' && obj.id == participantsRoster2[2].id;
+    });
+    const champion = {};
+    champion.championId = getParticipant3Roster2Champion[0].attributes.actor;
+    champion.stats = getParticipant3Roster2Champion[0].attributes.stats;
+    return champion;
+  }
+  catch(error) {
+    console.log(error.response)
+  }
+}
+
 
 async function main(match, fakeData){
   try {
@@ -165,6 +255,12 @@ async function main(match, fakeData){
     const roster2 = getRoster2Id(match);
     const participantsRoster1 = getParticipantsRoster1Ids(await roster1, fakeData);
     const participantsRoster2 = getParticipantsRoster2Ids(await roster2, fakeData);
+    const participant1Roster1Champion = getParticipant1Roster1Champion(await roster1, await participantsRoster1);
+    const participant2Roster1Champion = getParticipant2Roster1Champion(await roster1, await participantsRoster1);
+    const participant3Roster1Champion = getParticipant3Roster1Champion(await roster1, await participantsRoster1);
+    const participant1Roster2Champion = getParticipant1Roster1Champion(await roster2, await participantsRoster2);
+    const participant2Roster2Champion = getParticipant2Roster1Champion(await roster2, await participantsRoster2);
+    const participant3Roster2Champion = getParticipant3Roster1Champion(await roster2, await participantsRoster2);
     // const roster1Stats(tout le contenu de la propriété stats);
     // const roster2Stats;
 
@@ -183,6 +279,12 @@ async function main(match, fakeData){
         roster2Id: await roster2,
         participantsRoster1: await participantsRoster1,
         participantsRoster2: await participantsRoster2,
+        participant1Roster1Champion: await participant1Roster1Champion,
+        participant2Roster1Champion: await participant2Roster1Champion,
+        participant3Roster1Champion: await participant3Roster1Champion,
+        participant1Roster2Champion: await participant1Roster2Champion,
+        participant2Roster2Champion: await participant2Roster2Champion,
+        participant3Roster2Champion: await participant3Roster2Champion,
       };
 
 
@@ -211,17 +313,14 @@ app.get('/test-fake-data', (req, res) => {
 
   fakeData.data.map(match => {
 
-
-
     if(match.attributes.tags.rankingType === "RANKED"){
       main(match, fakeData);
     }
 
-
   })
 
-
   res.json(fakeData);
+  
 });
 
 app.get('*', (req, res) => {
