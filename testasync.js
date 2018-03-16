@@ -117,14 +117,15 @@ app.get('/test-vincent', (req, res) => {
 app.get('/test-fake-data', (req, res) => {
 //https://stackoverflow.com/questions/45395805/using-await-in-promise-chain
   fakeData.data.map(match => {
-
+  //func
     async function getJSONAsync(){
         let json = await dataToObj(match, fakeData);
-        console.log(json)
+        console.log(await json)
         return json;
     }
-
+  //func
     function dataToObj(match, fakeData) {
+  //func
       async function GetAllParticipantsRoster1(fakeData){
         try {
           const allParticipants = await
@@ -143,6 +144,7 @@ app.get('/test-fake-data', (req, res) => {
           // console.log(participants);
           return participants;
         });
+
       return ({
         type: match.type,
         id: match.id,
