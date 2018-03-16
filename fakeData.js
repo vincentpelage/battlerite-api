@@ -1,5 +1,6 @@
 const fakeData = {
-  data: [{
+  data: [
+    {
       type: "match",
       id: "FEF36D129DDA4B738B6C50C253279A19",
       attributes: {
