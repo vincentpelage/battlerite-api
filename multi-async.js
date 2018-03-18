@@ -297,7 +297,7 @@ async function main(match, fakeData){
         console.error(err);
         return err;
       }
-      console.log(savedMatch);
+      // console.log(savedMatch);
     });
 
 
@@ -318,6 +318,15 @@ app.get('/test-fake-data', (req, res) => {
     }
 
   })
+  const test = db.collection('matches').aggregate([
+    { $match: { "participant1Roster1Champion.championId": "259914044" } },
+    { $group: { _id: null, total: { $sum: "$participant1Roster1Champion.stats.abilityUses" } } },
+    { $sort: { total: -1 } }
+    ]).toArray(function(err, results) {
+    console.log(results);
+  });
+
+  console.log(test)
 
   res.json(fakeData);
 
