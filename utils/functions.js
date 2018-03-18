@@ -1,4 +1,4 @@
-exports.getMatchType = async (match) => {
+getMatchType = async (match) => {
   try {
     return match.type;
   }
@@ -7,7 +7,7 @@ exports.getMatchType = async (match) => {
   }
 }
 
-exports.getMatchId = async (match) => {
+getMatchId = async (match) => {
   try {
     return match.id;
   }
@@ -16,7 +16,7 @@ exports.getMatchId = async (match) => {
   }
 }
 
-exports.getMatchCreatedAt = async (match) => {
+getMatchCreatedAt = async (match) => {
   try {
     return match.attributes.createdAt;
   }
@@ -25,7 +25,7 @@ exports.getMatchCreatedAt = async (match) => {
   }
 }
 
-exports.getMatchDuration = async (match) => {
+getMatchDuration = async (match) => {
   try {
     return match.attributes.duration;
   }
@@ -34,7 +34,7 @@ exports.getMatchDuration = async (match) => {
   }
 }
 
-exports.getMapId = async (match) => {
+getMapId = async (match) => {
   try {
     return match.attributes.stats.mapID;
   }
@@ -43,7 +43,7 @@ exports.getMapId = async (match) => {
   }
 }
 
-exports.getGameTypeId = async (match) => {
+getGameTypeId = async (match) => {
   try {
     return match.attributes.stats.type;
   }
@@ -52,7 +52,7 @@ exports.getGameTypeId = async (match) => {
   }
 }
 
-exports.getRankingTypeId = async (match) => {
+getRankingTypeId = async (match) => {
   try {
     return match.attributes.tags.rankingType;
   }
@@ -61,7 +61,7 @@ exports.getRankingTypeId = async (match) => {
   }
 }
 
-exports.getServerTypeId = async (match) => {
+getServerTypeId = async (match) => {
   try {
     return match.attributes.tags.serverType;
   }
@@ -70,7 +70,7 @@ exports.getServerTypeId = async (match) => {
   }
 }
 
-exports.getRoster1Id = async (match) => {
+getRoster1Id = async (match) => {
   try {
     return match.relationships.rosters.data[0].id;
   }
@@ -79,7 +79,7 @@ exports.getRoster1Id = async (match) => {
   }
 }
 
-exports.getRoster2Id = async (match) => {
+getRoster2Id = async (match) => {
   try {
     return match.relationships.rosters.data[1].id;
   }
@@ -88,7 +88,7 @@ exports.getRoster2Id = async (match) => {
   }
 }
 
-exports.getParticipantsRoster1Ids = async (roster1, fakeData) => {
+getParticipantsRoster1Ids = async (roster1, fakeData) => {
   try {
     const getParticipantsRoster1Ids = fakeData.included.filter(function( obj ) {
         return obj.type == 'roster' && obj.id == roster1;
@@ -100,7 +100,7 @@ exports.getParticipantsRoster1Ids = async (roster1, fakeData) => {
   }
 }
 
-exports.getParticipantsRoster2Ids = async (roster2, fakeData) => {
+getParticipantsRoster2Ids = async (roster2, fakeData) => {
   try {
     const getParticipantsRoster2Ids = fakeData.included.filter(function( obj ) {
         return obj.type == 'roster' && obj.id == roster2;
@@ -112,20 +112,20 @@ exports.getParticipantsRoster2Ids = async (roster2, fakeData) => {
   }
 }
 
-exports.main = async (match, fakeData) => {
+main = async (match, fakeData) => {
   try {
-    const type = fns.getMatchType(match);
-    const id = fns.getMatchId(match);
-    const createdAt = fns.getMatchCreatedAt(match);
-    const duration = fns.getMatchDuration(match);
-    const mapID = fns.getMapId(match);
-    const gameType = fns.getGameTypeId(match);
-    const rankingType = fns.getRankingTypeId(match);
-    const serverType = fns.getServerTypeId(match);
-    const roster1 = fns.getRoster1Id(match);
-    const roster2 = fns.getRoster2Id(match);
-    const participantsRoster1 = fns.getParticipantsRoster1Ids(await roster1, fakeData);
-    const participantsRoster2 = fns.getParticipantsRoster2Ids(await roster2, fakeData);
+    const type = getMatchType(match);
+    const id = getMatchId(match);
+    const createdAt = getMatchCreatedAt(match);
+    const duration = getMatchDuration(match);
+    const mapID = getMapId(match);
+    const gameType = getGameTypeId(match);
+    const rankingType = getRankingTypeId(match);
+    const serverType = getServerTypeId(match);
+    const roster1 = getRoster1Id(match);
+    const roster2 = getRoster2Id(match);
+    const participantsRoster1 = getParticipantsRoster1Ids(await roster1, fakeData);
+    const participantsRoster2 = getParticipantsRoster2Ids(await roster2, fakeData);
 
     const datasMatch =
       {
@@ -161,4 +161,20 @@ exports.main = async (match, fakeData) => {
   catch(error) {
     console.log(error.response)
   }
+}
+
+module.exports = {
+  getMatchType: getMatchType,
+  getMatchId: getMatchId,
+  getMatchCreatedAt: getMatchCreatedAt,
+  getMatchDuration: getMatchDuration,
+  getMapId: getMapId,
+  getGameTypeId: getGameTypeId,
+  getRankingTypeId: getRankingTypeId,
+  getServerTypeId: getServerTypeId,
+  getRoster1Id: getRoster1Id,
+  getRoster2Id: getRoster2Id,
+  getParticipantsRoster1Ids: getParticipantsRoster1Ids,
+  getParticipantsRoster2Ids: getParticipantsRoster2Ids,
+  main: main
 }

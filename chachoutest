@@ -97,24 +97,24 @@ getServerTypeId = async (match) => {
   }
 }
 
-getRoster1 = async (match) => {
-  try {
-    const Roster1Id = match.relationships.rosters.data[0].id;
-    const getRoster1 = fakeData.included.filter(function( obj ) {
-        return obj.type == 'roster' && obj.id == Roster1Id;
-    });
-    const getParticipantsRoster1Ids = getRoster1[0].relationships.participants.data.map( obj => obj.id );
-    const getStatsRoster1 = getRoster1[0].attributes.stats;
-    return {
-      Roster1Id,
-      ParticipantsRoster1Ids: getParticipantsRoster1Ids,
-      StatsRoster1: getStatsRoster1
-    };
-  }
-  catch(error) {
-    console.log(error.response);
-  }
-}
+// getRoster1 = async (match) => {
+//   try {
+//     const Roster1Id = match.relationships.rosters.data[0].id;
+//     const getRoster1 = fakeData.included.filter(function( obj ) {
+//         return obj.type == 'roster' && obj.id == Roster1Id;
+//     });
+//     const getParticipantsRoster1Ids = getRoster1[0].relationships.participants.data.map( obj => obj.id );
+//     const getStatsRoster1 = getRoster1[0].attributes.stats;
+//     return {
+//       Roster1Id,
+//       ParticipantsRoster1Ids: getParticipantsRoster1Ids,
+//       StatsRoster1: getStatsRoster1
+//     };
+//   }
+//   catch(error) {
+//     console.log(error.response);
+//   }
+// }
 
 getRoster1Id = async (match) => {
   try {
@@ -182,6 +182,30 @@ getStatsRoster2 = async (roster2, fakeData) => {
   }
 }
 
+// isRoster1Won = async (roster1, fakeData) => {
+//   try {
+//     const getRoster1 = fakeData.included.filter(function( obj ) {
+//         return obj.type == 'roster' && obj.id == roster1;
+//     });
+//     return getRoster1[0].attributes.won;
+//   }
+//   catch(error) {
+//     console.log(error.response)
+//   }
+// }
+//
+// isRoster2Won = async (roster2, fakeData) => {
+//   try {
+//     const getRoster2 = fakeData.included.filter(function( obj ) {
+//         return obj.type == 'roster' && obj.id == roster2;
+//     });
+//     return getRoster2[0].attributes.won;
+//   }
+//   catch(error) {
+//     console.log(error.response)
+//   }
+// }
+
 main = async (match, fakeData) => {
   try {
     const type = getMatchType(match);
@@ -198,7 +222,9 @@ main = async (match, fakeData) => {
     const participantsRoster2 = getParticipantsRoster2Ids(await roster2Id, fakeData);
     const statsRoster1 = getStatsRoster1(await roster1Id, fakeData);
     const statsRoster2 = getStatsRoster2(await roster2Id, fakeData);
-    const roster1 = getRoster1(match);
+    // const isRoster1Won = isRoster1Won(await roster1Id, fakeData);
+    // const isRoster2Won = isRoster2Won(await roster2Id, fakeData);
+    // const roster1 = getRoster1(match);
 
     const datasMatch =
       {
@@ -216,11 +242,14 @@ main = async (match, fakeData) => {
         participantsRoster2: await participantsRoster2,
         statsRoster1: await statsRoster1,
         statsRoster2: await statsRoster2,
-        roster1: await roster1,
+        // isRoster1Won: await isRoster1Won,
+        // isRoster2Won: await isRoster2Won,
+        // roster1: await roster1,
         roster1bis: {
           roster1Id: await roster1Id,
           participantsRoster1Ids: await participantsRoster1,
-          statsRoster1: getStatsRoster1
+          statsRoster1: await statsRoster1,
+          isRoster1Won: await isRoster1Won,
         }
       };
 
@@ -245,7 +274,7 @@ main = async (match, fakeData) => {
 }
 
 // Test on fake data
-app.get('/chachou', (req, res) => {
+app.get('/chachoutest', (req, res) => {
   fakeData.data.map(match => {
     if(match.attributes.tags.rankingType === "RANKED") {
       main(match, fakeData);
