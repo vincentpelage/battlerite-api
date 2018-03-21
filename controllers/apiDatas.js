@@ -1,40 +1,21 @@
-// Package import
-const express = require('express');
-const bodyParser = require('body-parser');
-const path = require('path');
-const axios = require('axios');
-require('dotenv').config();
+/*
+ * Npm import
+ */
 const mongoose = require('mongoose');
+/*
+ * Local import
+ */
+const Match = require('../models/matchModel');
+const fakeData = require('../fakeData');
 
-const fakeData = require('./fakeData');
-const Match = require('./models/matchModel');
-var fns = require("./utils/functions");
-
-// Init variable
-const app = express();
-const key = process.env.KEY_API_BATTLERITE;
-
+//bdd connection
 const mongoDB = `mongodb://vincent:${process.env.DB_PASS}@ds113749.mlab.com:13749/battlerite-api`;
 mongoose.connect(mongoDB);
-// lancer et stocker la connexion
 const db = mongoose.connection;
-// tester la connexion
 db.on('error', console.error.bind(console, 'mongoDB connection error: '));
 db.once('open', () => {
   console.log('Connected to the DB');
 });
-
-// Serve static files from the React app
-app.use(express.static(path.join(__dirname, 'client/build')));
-
-// app.use(bodyParser.json());
-// app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
-// app.use((req, res, next) => {
-//   res.header('Access-Control-Allow-Origin', '*');
-//   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, X-Title-Id, Authorization');
-//   next();
-// });
-//
 
 async function getMatchType(match){
   try {
@@ -307,9 +288,7 @@ async function main(match, fakeData){
   }
 }
 
-// Test on fake data
-
-app.get('/test-fake-data', (req, res) => {
+module.exports = function getApiDatas (req, res) {
 
   fakeData.data.map(match => {
 
@@ -317,24 +296,11 @@ app.get('/test-fake-data', (req, res) => {
       main(match, fakeData);
     }
 
-  })
-  const test = db.collection('matches').aggregate([
-    { $match: { "participant1Roster1Champion.championId": "259914044" } },
-    { $group: { _id: null, total: { $sum: "$participant1Roster1Champion.stats.abilityUses" } } },
-    { $sort: { total: -1 } }
-    ]).toArray(function(err, results) {
-    console.log(results);
-  });
 
-  console.log(test)
+
+  })
+
+
 
   res.json(fakeData);
-
-});
-
-app.get('*', (req, res) => {
-  res.sendFile(path.join(`${__dirname}/client/build/index.html`));
-});
-
-const port = process.env.PORT || 5000;
-app.listen(port);
+};
